@@ -6,7 +6,6 @@ const produtosRoutes = require('./routes/produtosRoutes');
 
 const app = express();
 
-// Middleware para interpretar JSON
 app.use(express.json());
 app.use(cors());
 
