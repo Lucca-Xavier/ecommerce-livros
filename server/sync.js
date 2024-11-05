@@ -1,5 +1,7 @@
 const sequelize = require('./config/bd')
 const User = require('./models/User')
+const Product = require('./models/Product')
+
 
 
 sequelize.sync({ force: true }).then(() => {
