@@ -3,15 +3,15 @@ const Product = require("../models/Product");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  try {
-    const produtos = await Product.findAll();
-    res.status(200).json(produtos);
-  } catch (error) {
-    console.error("Erro ao buscar produtos:", error);
-    res.status(500).json({ error: "Erro ao buscar produtos" });
-  }
-});
-
+    try {
+      const produtos = await Product.findAll();
+      res.status(200).json(produtos);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+      res.status(500).json({ error: "Erro ao buscar produtos" });
+    }
+  });
+  
 router.post("/add", async (req, res) => {
   const { name, author, category, sinopse, year, image, price, qntEstoque } =
     req.body;

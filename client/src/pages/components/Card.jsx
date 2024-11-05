@@ -19,7 +19,7 @@ const Card = ({ produto }) => {
           <button onClick={handleEditarModal}>Editar</button>
           <button onClick={handleExcluirModal}>Excluir</button>
         </div>
-        <p></p>
+        <p>{produto.name}</p>
 
         <p className="mt-4">autor</p>
         <p>categoria</p>

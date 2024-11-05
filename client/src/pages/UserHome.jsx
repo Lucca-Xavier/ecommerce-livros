@@ -9,7 +9,7 @@ const UserHome = () => {
 
     const getProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/produtos");
+        const response = await fetch("http://localhost:3000/produtos/");
         const data = await response.json();
         console.log("Dados recebidos da API:", data); // Adicione esta linha para verificar os dados
         setProdutos(data);

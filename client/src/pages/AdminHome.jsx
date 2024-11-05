@@ -1,22 +1,37 @@
-import React from 'react'
-import Header from './components/Header'
-import Card from './components/Card'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import Header from "./components/Header";
+import Card from "./components/Card";
 
 const AdminHome = () => {
+  const [produtos, setProdutos] = useState([]);
+
+  useEffect(() => {
+
+    const getProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/produtos/");
+        const data = await response.json();
+        console.log("Dados recebidos da API:", data); // Adicione esta linha para verificar os dados
+        setProdutos(data);
+      } catch (error) {
+        console.error("Erro ao buscar produto", error);
+      }
+    };
+    
+
+    getProducts(); // Fetch products on component mount
+  }, []);
+
   return (
     <div>
-      <Header/>
-      <h1>Você é um administrador</h1>
-
-      <div className='mt-20 flex justify-end mx-12'>
-        <Link to='/addproduct' className='px-8 py-2 bg-emerald-100 text-emerald-600 rounded-lg'>Cadastrar Livro</Link>
-      </div>
-      <div className='grid grid-cols-4 mx-12 mt-12'>
-        <Card />
+      <Header />
+      <div className="grid grid-cols-4 mx-12 mt-20">
+        {produtos.map(produto => (
+          <Card key={produto.id} produto={produto} />
+        ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminHome
+export default AdminHome;
