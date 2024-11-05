@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const FormProduct = () => {
     // Estados para armazenar as entradas do formulário
@@ -14,13 +15,41 @@ const FormProduct = () => {
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 51 }, (_, i) => currentYear - i);
 
-    const handleSubmit = (e) => {
-        e.preventDefault(); 
+    const navigate = useNavigate(); // Para navegação após o envio do formulário
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const produto = {
+            name,
+            author,
+            category,
+            sinopse,
+            year,
+            image,
+            price,
+            qntEstoque,
+        };
 
         try {
-           
+            const response = await fetch(`http://localhost:3000/produtos/add`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(produto),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log("Produto adicionado", result);
+                navigate('/adminhome');
+            } else {
+                console.error("Erro ao adicionar produto", result.error);
+            }
         } catch (error) {
-            console.error('Erro ao cadastrar produto:', error);
+            console.error("Erro ao fazer a requisição:", error);
         }
     };
 
@@ -99,6 +128,13 @@ const FormProduct = () => {
                 />
 
                 <p>Imagem</p>
+                <input
+                    className='bg-gray-100 w-full rounded py-1 mt-2 mb-6'
+                    type="text"
+                    placeholder="URL da imagem"
+                    value={image}
+                    onChange={(e) => setImage(e.target.value)}
+                />
 
                 <button
                     type="submit"
