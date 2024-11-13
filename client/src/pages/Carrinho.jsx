@@ -1,29 +1,35 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 
 import Header from '../components/Header';
 
 const Carrinho = () => {
   const navigate = useNavigate(); 
-  const modalRef = useRef(null); 
+  const [cartItems, setCartItems] = useState([]); // Estado para armazenar os itens do carrinho
+  const userId = 1; // Aqui você deve obter o userId dinamicamente, por exemplo, de um contexto ou de um cookie
 
   const closeModal = () => {
     navigate('/adminhome'); 
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        closeModal();
+    // Requisição para buscar os itens do carrinho
+    const fetchCartItems = async () => {
+      try {
+        const response = await fetch(`/api/cart/${userId}`);
+        const data = await response.json();
+        if (response.ok) {
+          setCartItems(data); // Atualiza o estado com os itens do carrinho
+        } else {
+          console.error('Erro ao buscar itens do carrinho:', data.message);
+        }
+      } catch (error) {
+        console.error('Erro de rede:', error);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    fetchCartItems();
+  }, [userId]);
 
   return (
     <div>
@@ -35,7 +41,7 @@ const Carrinho = () => {
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-              <div className="pointer-events-auto w-screen max-w-md" ref={modalRef}> 
+              <div className="pointer-events-auto w-screen max-w-md"> 
                 <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                   <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                     <div className="flex items-start justify-between">
@@ -48,8 +54,8 @@ const Carrinho = () => {
                         >
                           <span className="absolute -inset-0.5"></span>
                           <span className="sr-only">Close panel</span>
-                          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                           </svg>
                         </button>
                       </div>
@@ -58,62 +64,39 @@ const Carrinho = () => {
                     <div className="mt-8">
                       <div className="flow-root">
                         <ul role="list" className="-my-6 divide-y divide-gray-200">
-                          <li className="flex py-6">
-                            <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                              <img
-                                src="https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-01.jpg"
-                                alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt."
-                                className="h-full w-full object-cover object-center"
-                              />
-                            </div>
-
-                            <div className="ml-4 flex flex-1 flex-col">
-                              <div>
-                                <div className="flex justify-between text-base font-medium text-gray-900">
-                                  <h3>
-                                    <a href="#">Throwback Hip Bag</a>
-                                  </h3>
-                                  <p className="ml-4">$90.00</p>
+                          {cartItems.length === 0 ? (
+                            <p className="text-center text-gray-500">Seu carrinho está vazio.</p>
+                          ) : (
+                            cartItems.map((item) => (
+                              <li key={item.id} className="flex py-6">
+                                <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                  <img
+                                    src={item.Product.image} // A imagem do produto
+                                    alt={item.Product.name}  // Nome do produto
+                                    className="h-full w-full object-cover object-center"
+                                  />
                                 </div>
-                                <p className="mt-1 text-sm text-gray-500">Salmon</p>
-                              </div>
-                              <div className="flex flex-1 items-end justify-between text-sm">
-                                <p className="text-gray-500">Qty 1</p>
 
-                                <div className="flex">
-                                  <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
+                                <div className="ml-4 flex flex-1 flex-col">
+                                  <div>
+                                    <div className="flex justify-between text-base font-medium text-gray-900">
+                                      <h3>
+                                        <a href="#">{item.Product.name}</a>
+                                      </h3>
+                                      <p className="ml-4">${item.Product.price}</p>
+                                    </div>
+                                    <p className="mt-1 text-sm text-gray-500">{item.Product.category}</p>
+                                  </div>
+                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                    <p className="text-gray-500">Qty {item.quantity}</p>
+                                    <div className="flex">
+                                      <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          </li>
-                          <li className="flex py-6">
-                            <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                              <img
-                                src="https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-02.jpg"
-                                alt="Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch."
-                                className="h-full w-full object-cover object-center"
-                              />
-                            </div>
-
-                            <div className="ml-4 flex flex-1 flex-col">
-                              <div>
-                                <div className="flex justify-between text-base font-medium text-gray-900">
-                                  <h3>
-                                    <a href="#">Medium Stuff Satchel</a>
-                                  </h3>
-                                  <p className="ml-4">$32.00</p>
-                                </div>
-                                <p className="mt-1 text-sm text-gray-500">Blue</p>
-                              </div>
-                              <div className="flex flex-1 items-end justify-between text-sm">
-                                <p className="text-gray-500">Qty 1</p>
-
-                                <div className="flex">
-                                  <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
+                              </li>
+                            ))
+                          )}
                         </ul>
                       </div>
                     </div>
@@ -122,7 +105,7 @@ const Carrinho = () => {
                   <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
-                      <p>$262.00</p>
+                      <p>${cartItems.reduce((total, item) => total + item.Product.price * item.quantity, 0).toFixed(2)}</p>
                     </div>
                     <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                     <div className="mt-6">

@@ -32,14 +32,18 @@ router.get('/:userId', async (req,res) => {
 router.post('/add', async (req, res) => {
     const { userId, productId, quantity } = req.body;
 
+    console.log(`UserId: ${userId}, ProductId: ${productId}, Quantity: ${quantity}`);  
+
     try {
         const user = await User.findByPk(userId);
         if (!user) {
+            console.log(`User not found for id: ${userId}`); 
             return res.status(404).json({ error: 'User not found' });
         }
 
         const product = await Product.findByPk(productId);
         if (!product) {
+            console.log(`Product not found for id: ${productId}`);  
             return res.status(404).json({ error: 'Product not found' });
         }
 
@@ -60,7 +64,7 @@ router.post('/add', async (req, res) => {
 
         res.status(201).json({ message: "Item added successfully" });
     } catch (error) {
-        console.error("Error adding product to cart:", error);
+        console.error("Error adding product to cart:", error); 
         res.status(500).json({ message: "Error adding product to cart" });
     }
 });

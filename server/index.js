@@ -13,7 +13,7 @@ app.use(cors());
 
 app.use('/auth', authRoutes);
 app.use('/products', produtosRoutes)
-app.use('/carrinho/', carrinhoRoutes)
+app.use('/carrinho', carrinhoRoutes)
 
 
 const PORT = process.env.PORT || 3000;

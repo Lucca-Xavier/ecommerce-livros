@@ -62,11 +62,17 @@ router.post("/login", async (req, res) => {
 
 router.get('/users', async (req, res) => {
     try {
-        const { email } = req.body;
+        // Buscar todos os usuários sem filtrar pelo email
+        const users = await User.findAll();
 
-        const users = await User.findAll({where: {email}})
+        if (users.length === 0) {
+            return res.status(404).json({ error: 'Nenhum usuário encontrado' });
+        }
+
+        // Retorna todos os usuários encontrados
         res.status(200).json(users);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Erro ao buscar usuários' });
     }
 });

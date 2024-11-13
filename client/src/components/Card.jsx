@@ -19,9 +19,10 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
   const [error, setError] = useState('');
 
   const userID = localStorage.getItem("userId");
+  console.log("User ID:", userID);
+  
   const navigate = useNavigate();
 
-  console.log("O ID DO USUARIO É:", userID);
 
   // Função para abrir/fechar o modal de edição
   function handleEditarModal() {
@@ -121,26 +122,43 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
 
 
   const handleAddToCart = async () => {
+    if (!userID) {
+      alert("Usuário não está logado.");
+      return;
+    }
+  
+    if (!produto.id) {
+      alert("ID do produto não encontrado.");
+      return;
+    }
+  
     try {
       const response = await axios.post("http://localhost:3000/carrinho/add", {
         userId: userID, 
         productId: produto.id, 
         quantity: 1,
       });
-      console.log(`Product added successfully no id ${userID}`);
+  
+      if (response.data.success) {
+        console.log(`Produto adicionado com sucesso ao carrinho.`);
+        alert("Produto adicionado ao carrinho com sucesso!");
+      } else {
+        alert(`Erro: ${response.data.message || "Não foi possível adicionar ao carrinho."}`);
+      }
     } catch (error) {
       if (error.response && error.response.data) {
-        console.error("Error adding product to cart:", error.response.data);
-        alert(`Error: ${error.response.data.message || "Unable to add to cart"}`);
+        console.error("Erro ao adicionar produto ao carrinho:", error.response.data);
+        alert(`Erro: ${error.response.data.message || "Não foi possível adicionar ao carrinho."}`);
       } else if (error.request) {
-        console.error("Network error or server did not respond:", error.message);
-        alert("Network error: Could not connect to server.");
+        console.error("Erro de rede ou servidor não respondeu:", error.message);
+        alert("Erro de rede: Não foi possível conectar ao servidor.");
       } else {
-        console.error("Unexpected error:", error.message);
-        alert("An unexpected error occurred.");
+        console.error("Erro inesperado:", error.message);
+        alert("Ocorreu um erro inesperado.");
       }
     }
   };
+  
 
 
   return (
