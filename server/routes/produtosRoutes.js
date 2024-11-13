@@ -64,23 +64,28 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.delete("/:id/delete", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const produtos = await Product.destroy({ where: { id } });
+    // Excluindo o produto pelo ID
+    const produtosDeletados = await Product.destroy({ where: { id } });
 
-    if (!produtos) {
+    // Verifica se algum produto foi deletado
+    if (produtosDeletados === 0) {
       return res.status(404).json({ error: "Produto não encontrado" });
     }
 
+    // Produto deletado com sucesso
     res.status(200).json({ message: "Produto deletado" });
   } catch (error) {
-    console.log("Erro ao deletar produto");
+    console.error("Erro ao deletar produto:", error);
+    res.status(500).json({ error: "Erro ao tentar deletar produto" });
   }
 });
 
-router.put("/:id/update", async (req, res) => {
+
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { name, author, category, sinopse, year, image, price, qntEstoque } =

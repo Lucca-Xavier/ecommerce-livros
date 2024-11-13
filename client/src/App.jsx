@@ -5,24 +5,24 @@ import UserHome from './pages/UserHome';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import FormProduct from './pages/FormProduct';
+import { AuthProvider } from './pages/AuthContext';
+import Carrinho from './pages/Carrinho';
 
 function App() {
   return (
-    <Router> 
-      <Routes> 
-        <Route path="/userhome" element={<UserHome />} />
-        <Route path="/adminhome" element={<AdminHome />} />
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    <AuthProvider>
+      <Router>
+        <Routes> 
+          <Route path="/userhome" element={<UserHome />} />
+          <Route path="/adminhome" element={<AdminHome />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/addproduct" element={<FormProduct />} />
+          <Route path="/carrinho" element={<Carrinho />} />
 
-
-        
-        <Route path="/addproduct" element={<FormProduct />} />
-
-
-
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

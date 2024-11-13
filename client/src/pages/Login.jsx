@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = React.useState("");
@@ -70,9 +70,14 @@ const Login = () => {
           <label>Admin</label>
         </div>
 
-        <button type="submit" className="w-full mt-6 bg-emerald-600 text-white rounded-lg py-2">
+        <button type="submit" className="w-full mt-6 bg-emerald-600 text-white rounded-lg py-2 mb-4">
           Login
         </button>
+
+        <span className="">
+          Ainda não tem uma conta? {'  '}
+          <Link to='/register' className="text-emerald-700">Registre-se</Link>
+        </span>
       </form>
     </div>
   );
