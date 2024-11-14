@@ -50,9 +50,9 @@ router.post("/login", async (req, res) => {
         if (!isValidPassword) {
             return res.status(400).json({ error: "Senha invalida" });
         }
-        const token = jwt.sign({ id: userRegistered.id, role: userRegistered.role }, 'secret', { expiresIn: '3h' });
+        const token = jwt.sign({ id: userRegistered.id, role: userRegistered.role}, 'secret', { expiresIn: '3h' });
 
-        res.status(200).json({ token}); 
+        res.status(200).json({ token, id: userRegistered.id}); 
     } catch (error) {
         console.error('Erro ao logar', error.message);
         res.status(500).json({ error: 'Erro ao logar' });

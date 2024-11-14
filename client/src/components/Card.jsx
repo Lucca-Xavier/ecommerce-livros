@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from 'axios'
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 const Card = ({ produto, atualizarProduto, removerProduto }) => {
@@ -19,10 +19,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
   const [error, setError] = useState('');
 
   const userID = localStorage.getItem("userId");
-  console.log("User ID:", userID);
-  
   const navigate = useNavigate();
-
 
   // Função para abrir/fechar o modal de edição
   function handleEditarModal() {
@@ -88,24 +85,17 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
         console.log("ID do produto não está definido.");
         return;
       }
+      console.log(formData)
+      const response = await axios.put(`http://localhost:3000/products/${productId}`, formData);
 
-      const response = await fetch(`http://localhost:3000/products/${productId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
+      if (response.status === 200) {
         console.log("Produto atualizado com sucesso");
-        const updatedProduct = await response.json();
+        const updatedProduct = response.data;
         atualizarProduto(updatedProduct); 
         setEditarModal(false); 
         setError(''); 
       } else {
-        const data = await response.json();
-        console.log("Erro ao atualizar produto:", data.error);
+        console.log("Erro ao atualizar produto:", response.data.error);
       }
     } catch (error) {
       console.log("Erro ao fazer requisição:", error);
@@ -116,10 +106,9 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === "quantity" ? parseInt(value, 10) || 0 : value,
     }));
   };
-
 
   const handleAddToCart = async () => {
     if (!userID) {
@@ -158,8 +147,6 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
       }
     }
   };
-  
-
 
   return (
     <>
@@ -168,6 +155,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
           <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleEditarModal}>Editar</button>
           <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleExcluirModal}>Excluir</button>
         </div>
+        <p><img src={produto.image} alt="" /></p>
         <p>{produto.name}</p>
         <p className="mt-4">Autor: {produto.author}</p>
         <p>Categoria: {produto.category}</p>
@@ -250,7 +238,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
                 <input
                   type="text"
                   name="quantity"
-                  value={formData.quantity}
+                  value={formData.qntEstoque}
                   onChange={handleInputChange}
                   className="block w-full p-2 border border-gray-300 rounded-lg"
                 />
@@ -266,7 +254,6 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
                   className="block w-full p-2 border border-gray-300 rounded-lg"
                 />
               </label>
-
               <button type="submit" className="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg">
                 Salvar
               </button>

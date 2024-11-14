@@ -24,6 +24,8 @@ const Login = () => {
 
         navigate("/userhome")
         console.log("Token:", data.token); 
+        localStorage.setItem("userId", data.id)
+        console.log(localStorage.getItem("userId"))
       } else {
         alert(data.error || "Erro no login");
       }

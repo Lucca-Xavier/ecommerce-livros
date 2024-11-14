@@ -78,13 +78,21 @@ router.delete('/:userId/:productId', async (req, res) => {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
-        const product = await Cart.findOne({ where: { userId, productId } });
-        if (!product) {
+        const item = await Cart.findOne({ where: { userId, productId } });
+        if (!item) {
             return res.status(404).json({ error: 'Item não encontrado no carrinho' });
         }
 
-        await product.destroy();
-        const updatedCart = await Cart.findAll({ where: { userId } });
+        await item.destroy();
+        
+        const updatedCart = await Cart.findAll({
+            where: { userId },
+            include: {
+                model: Product,
+                attributes: ['id', 'name', 'author', 'category', 'price', 'image']
+            }
+        });
+        
         res.status(200).json({ message: 'Item deletado com sucesso', cart: updatedCart });
 
     } catch (error) {
@@ -113,11 +121,19 @@ router.put('/:userId/:productId', async (req, res) => {
             return res.status(404).json({ error: 'Produto não encontrado' });
         }
 
+        // Atualiza a quantidade e o preço total do item no carrinho
         item.quantity = quantity;
         item.priceAll = quantity * product.price;  
         await item.save();
 
-        const updatedCart = await Cart.findAll({ where: { userId } });
+        // Retorna o carrinho atualizado do usuário
+        const updatedCart = await Cart.findAll({
+            where: { userId },
+            include: {
+                model: Product,
+                attributes: ['id', 'name', 'author', 'category', 'price', 'image']
+            }
+        });
 
         res.status(200).json({ message: 'Item atualizado com sucesso', cart: updatedCart });
 
@@ -126,7 +142,6 @@ router.put('/:userId/:productId', async (req, res) => {
         res.status(500).json({ message: 'Erro ao atualizar item no carrinho' });
     }
 });
-
 
 
 module.exports = router;
