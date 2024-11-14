@@ -37,7 +37,7 @@ const AdminHome = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-4 mx-12 mt-20">
+      <div className="grid grid-cols-4 mx-12 mt-20 gap-8">
         {produtos.map((produto) => (
           <Card key={produto.id} produto={produto} />
         ))}

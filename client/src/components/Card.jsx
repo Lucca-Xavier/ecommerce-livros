@@ -21,7 +21,6 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
   const userID = localStorage.getItem("userId");
   const navigate = useNavigate();
 
-  // Função para abrir/fechar o modal de edição
   function handleEditarModal() {
     setEditarModal(!editarModal);
     if (!editarModal) {
@@ -35,20 +34,20 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
         quantity: produto.quantity || '',
         image: produto.image || ''
       });
-      setProductId(produto.id); // Definir o ID do produto para editar
+      setProductId(produto.id); 
     }
   }
 
-  // Função para abrir/fechar o modal de exclusão
+
   function handleExcluirModal() {
     setExcluirModal(!excluirModal);
-    setProductId(produto.id); // Definindo o ID do produto ao abrir o modal
+    setProductId(produto.id); 
   }
 
-  // Função para deletar o produto
+
   const handleDelete = async (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Evita a propagação para o card
+    e.stopPropagation(); 
     
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
     if (!confirmDelete) return;
@@ -155,7 +154,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
           <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleEditarModal}>Editar</button>
           <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleExcluirModal}>Excluir</button>
         </div>
-        <p><img src={produto.image} alt="" /></p>
+        <img className="w-96 mx-auto mt-6" src={produto.image} alt="" />
         <p>{produto.name}</p>
         <p className="mt-4">Autor: {produto.author}</p>
         <p>Categoria: {produto.category}</p>
