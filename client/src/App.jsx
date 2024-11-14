@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import FormProduct from './pages/FormProduct';
 import { AuthProvider } from './pages/AuthContext';
 import Carrinho from './pages/Carrinho';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/addproduct" element={<FormProduct />} />
           <Route path="/carrinho" element={<Carrinho />} />
+          <Route path="/checkout" element={<Checkout />} />
+
 
         </Routes>
       </Router>
