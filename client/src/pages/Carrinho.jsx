@@ -106,6 +106,44 @@ const Carrinho = () => {
     }
   };
 
+  const handleCheckout = async () => {
+    const orderData = {
+      UserId: userId,
+      products: cartItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      })),
+      totalprice: cartItems.reduce((total, item) => {
+        const produto = findProduct(item.productId);
+        return produto ? total + produto.price * item.quantity : total;
+      }, 0),
+    };
+
+    try {
+      const response = await fetch("http://localhost:3000/orders/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        // Sucesso: Redireciona ou limpa o carrinho
+        alert("Order placed successfully!");
+        setCartItems([]); // Limpa o carrinho
+        navigate("/orders"); // Redireciona para a página de pedidos
+      } else {
+        const errorData = await response.json();
+        console.error("Erro ao realizar pedido:", errorData.message);
+        alert("Erro ao realizar pedido.");
+      }
+    } catch (error) {
+      console.error("Erro de rede:", error);
+      alert("Erro ao realizar pedido.");
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -202,7 +240,12 @@ const Carrinho = () => {
                       }, 0).toFixed(2)}</p>
                     </div>
                     <div className="mt-6">
-                      <Link to='/checkout' className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Checkout</Link>
+                      <button
+                        onClick={handleCheckout}
+                        className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                      >
+                        Checkout
+                      </button>
                     </div>
                     <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                       <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">

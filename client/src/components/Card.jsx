@@ -13,7 +13,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
     year: '',
     sinopse: '',
     price: '',
-    quantity: '',
+    qntEstoque: '',
     image: ''
   });
   const [error, setError] = useState('');
@@ -31,7 +31,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
         year: produto.year,
         sinopse: produto.sinopse || '',
         price: produto.price || '',
-        quantity: produto.quantity || '',
+        qntEstoque: produto.qntEstoque || '', 
         image: produto.image || ''
       });
       setProductId(produto.id); 
@@ -73,33 +73,56 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
-
-    if (!formData.name || !formData.author || !formData.category || !formData.year || !formData.price || !formData.quantity) {
+  
+    if (!formData.name || !formData.author || !formData.category || !formData.year || !formData.price || !formData.qntEstoque) {
       setError("Preencha todos os campos obrigatórios.");
       return;
     }
-
+  
     try {
       if (!productId) {
-        console.log("ID do produto não está definido.");
+        console.error("ID do produto não está definido.");
         return;
       }
-      console.log(formData)
-      const response = await axios.put(`http://localhost:3000/products/${productId}`, formData);
-
-      if (response.status === 200) {
+  
+      const payload = {
+        name: formData.name.trim(),
+        author: formData.author.trim(),
+        category: formData.category.trim(),
+        year: parseInt(formData.year, 10),
+        sinopse: formData.sinopse.trim(),
+        price: parseFloat(formData.price),
+        qntEstoque: parseInt(formData.qntEstoque, 10), 
+        image: formData.image.trim(),
+    };
+  
+      console.log("Payload enviado:", payload);
+  
+      const response = await fetch(`http://localhost:3000/products/${productId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (response.ok) {
+        const updatedProduct = await response.json();
         console.log("Produto atualizado com sucesso");
-        const updatedProduct = response.data;
-        atualizarProduto(updatedProduct); 
-        setEditarModal(false); 
-        setError(''); 
+        atualizarProduto(updatedProduct);
+        navigate("/UserHome")
+        setError("");
       } else {
-        console.log("Erro ao atualizar produto:", response.data.error);
+        const errorData = await response.json();
+        console.error("Erro ao atualizar produto:", errorData);
+        setError(errorData.message || "Erro ao atualizar o produto.");
       }
     } catch (error) {
-      console.log("Erro ao fazer requisição:", error);
+      console.error("Erro ao fazer requisição:", error);
+      setError("Erro ao conectar com o servidor.");
     }
   };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -136,7 +159,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
     } catch (error) {
       if (error.response && error.response.data) {
         console.error("Erro ao adicionar produto ao carrinho:", error.response.data);
-        alert(`Erro: ${error.response.data.message || "Não foi possível adicionar ao carrinho."}`);
+        alert(`Erro: ${error.response.data.message || "Não foi possível adicionar ao  carrinho."}`);
       } else if (error.request) {
         console.error("Erro de rede ou servidor não respondeu:", error.message);
         alert("Erro de rede: Não foi possível conectar ao servidor.");
@@ -236,7 +259,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
                 <span className="block text-gray-700 text-sm font-bold mb-2">Quantidade em Estoque:</span>
                 <input
                   type="text"
-                  name="quantity"
+                  name="qntEstoque"
                   value={formData.qntEstoque}
                   onChange={handleInputChange}
                   className="block w-full p-2 border border-gray-300 rounded-lg"

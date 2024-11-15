@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../pages/AuthContext'; // ajuste o caminho para o AuthProvider
+import { useAuth } from '../pages/AuthContext';
 
 const Header = () => {
   const { isLoggedIn, logout } = useAuth();
@@ -13,7 +13,7 @@ const Header = () => {
         <span className="flex gap-8">
           <li><Link to="/userhome">Home</Link></li>
           <li><Link to="/carrinho">Carrinho</Link></li>
-          <li><Link to="/">Minhas Compras</Link></li>
+          <li><Link to="/orders">Minhas Compras</Link></li>
         </span>
       </ul>
 

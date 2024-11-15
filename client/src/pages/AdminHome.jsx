@@ -17,7 +17,7 @@ const AdminHome = () => {
         console.error("Erro ao buscar produtos", error);
       }
     };
-
+    console.log(produtos);
     getProducts();
   }, []);
 

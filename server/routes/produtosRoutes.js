@@ -114,12 +114,13 @@ router.put("/:id", async (req, res) => {
         { where: { id } }
     )
 
-    res.status(200).json({message: "Produto editado"})
-    console.log(message)
+    res.status(200).json({ message: "Produto editado com sucesso" });
+    console.log("Produto editado com sucesso");
 
 
   } catch (error) {
-    console.log("Erro ao editar produto")
+    console.error("Erro ao editar produto:", error);
+    res.status(500).json({ error: "Erro ao editar produto" });
   }
 });
 

@@ -3,6 +3,7 @@ const express = require('express');
 const authRoutes = require('./routes/authRoutes');
 const produtosRoutes = require('./routes/produtosRoutes');
 const carrinhoRoutes = require('./routes/carrinhoRoutes');
+const orderRoutes = require('./routes/OrderRoutes')
 
 
 
@@ -14,6 +15,7 @@ app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/products', produtosRoutes)
 app.use('/carrinho', carrinhoRoutes)
+app.use('/orders', orderRoutes)
 
 
 const PORT = process.env.PORT || 3000;
