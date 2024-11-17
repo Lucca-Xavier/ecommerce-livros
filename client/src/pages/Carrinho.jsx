@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import Card from '../components/Card';
 
 const Carrinho = () => {
   const userId = localStorage.getItem("userId");
@@ -147,6 +148,13 @@ const Carrinho = () => {
   return (
     <div>
       <Header />
+
+      <div className="grid grid-cols-4 mx-12 mt-20 gap-8">
+        {produtos.map((produto) => (
+          <Card key={produto.id} produto={produto} />
+        ))}
+      </div>
+  
 
       <div className="relative z-10" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>

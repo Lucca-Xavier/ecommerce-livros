@@ -64,12 +64,7 @@ const Orders = () => {
                       Data: {new Date(order.createdAt).toLocaleDateString()} | Total: ${order.totalprice.toFixed(2)}
                     </p>
                   </div>
-                  <Link
-                    to={`/orders/${order.id}`}
-                    className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
-                  >
-                    Ver Detalhes &rarr;
-                  </Link>
+                
                 </div>
                 <div className="mt-2">
                   <p className="text-sm text-gray-700">Produtos:</p>
