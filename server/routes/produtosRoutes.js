@@ -11,6 +11,24 @@ router.get("/", async (req, res) => {
       res.status(500).json({ error: "Erro ao buscar produtos" });
     }
   });
+
+
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const produto = await Product.findByPk(id);
+
+    if (!produto) {
+      return res.status(404).json({ error: "Produto não encontrado" });
+    }
+
+    res.status(200).json(produto);
+  } catch (error) {
+    console.error("Erro ao buscar produto:", error);
+    res.status(500).json({ error: "Erro ao buscar produto" });
+  }
+});
+
   
 router.post("/add", async (req, res) => {
   const { name, author, category, sinopse, year, image, price, qntEstoque } =

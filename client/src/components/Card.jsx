@@ -22,6 +22,7 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
   const navigate = useNavigate();
 
   function handleEditarModal() {
+    e.stopPropagation(); 
     setEditarModal(!editarModal);
     if (!editarModal) {
       setFormData({
@@ -60,13 +61,10 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
     } catch (error) {
       if (error.response && error.response.data) {
         console.error("Error deleting product:", error.response.data);
-        alert(`Error: ${error.response.data.message || "Unable to delete product"}`);
       } else if (error.request) {
         console.error("Network error or server did not respond:", error.message);
-        alert("Network error: Could not connect to server.");
       } else {
         console.error("Unexpected error:", error.message);
-        alert("An unexpected error occurred.");
       }
     }
   };
@@ -132,7 +130,9 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
     }));
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e) => {
+    e.stopPropagation();
+
     if (!userID) {
       alert("Usuário não está logado.");
       return;
@@ -170,9 +170,13 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
     }
   };
 
+  const handleCardClick = () => {
+    navigate(`/produtos/${produto.id}`);
+  };
+
   return (
     <>
-      <div className="p-4 border-2 border-emerald-100 rounded-lg">
+      <div onClick={handleCardClick} className="p-4 border-2 border-emerald-100 rounded-lg">
         <div className="flex justify-end space-x-2">
           <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleEditarModal}>Editar</button>
           <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleExcluirModal}>Excluir</button>

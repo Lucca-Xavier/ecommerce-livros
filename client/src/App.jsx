@@ -9,6 +9,7 @@ import { AuthProvider } from './pages/AuthContext';
 import Carrinho from './pages/Carrinho';
 import Orders from './pages/Orders';
 import Checkout from './pages/Checkout';
+import Detail from './pages/Detail';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/carrinho" element={<Carrinho />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/produtos/:id" element={<Detail />} />
 
 
         </Routes>
