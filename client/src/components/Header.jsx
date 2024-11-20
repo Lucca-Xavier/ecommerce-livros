@@ -4,10 +4,8 @@ import { useAuth } from '../pages/AuthContext';
 
 const Header = () => {
   const { isLoggedIn, logout } = useAuth();
-  const role = localStorage.getItem("userRole");
-  console.log('User Role local storage:', role);
-
-  return (
+ 
+ return (
     <header className="flex mx-8 my-4 justify-between rounded-xl px-12 py-3 bg-emerald-600 text-white">
       <ul className="flex justify-between">
         <span className="flex gap-8">

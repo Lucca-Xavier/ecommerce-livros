@@ -1,28 +1,28 @@
 import React, { useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Card = ({ produto, atualizarProduto, removerProduto }) => {
   const [editarModal, setEditarModal] = useState(false);
   const [excluirModal, setExcluirModal] = useState(false);
-  const [productId, setProductId] = useState('');
+  const [productId, setProductId] = useState("");
   const [formData, setFormData] = useState({
-    name: '',
-    author: '',
-    category: '',
-    year: '',
-    sinopse: '',
-    price: '',
-    qntEstoque: '',
-    image: ''
+    name: "",
+    author: "",
+    category: "",
+    year: "",
+    sinopse: "",
+    price: "",
+    qntEstoque: "",
+    image: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const userID = localStorage.getItem("userId");
   const navigate = useNavigate();
 
-  function handleEditarModal() {
-    e.stopPropagation(); 
+  function handleEditarModal(e) {
+    e.stopPropagation(); // Evita clicar na modal ao invés do card.
     setEditarModal(!editarModal);
     if (!editarModal) {
       setFormData({
@@ -30,103 +30,88 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
         author: produto.author,
         category: produto.category,
         year: produto.year,
-        sinopse: produto.sinopse || '',
-        price: produto.price || '',
-        qntEstoque: produto.qntEstoque || '', 
-        image: produto.image || ''
+        sinopse: produto.sinopse || "",
+        price: produto.price || "",
+        qntEstoque: produto.qntEstoque || "",
+        image: produto.image || "",
       });
-      setProductId(produto.id); 
+      setProductId(produto.id);
     }
   }
 
-
-  function handleExcluirModal() {
+  function handleExcluirModal(e) {
+    e.stopPropagation();
     setExcluirModal(!excluirModal);
-    setProductId(produto.id); 
+    setProductId(produto.id);
   }
 
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    e.stopPropagation(); 
-    
-    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
+    e.stopPropagation();
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
     if (!confirmDelete) return;
 
     try {
-      const response = await axios.delete(`http://localhost:3000/products/${produto.id}`);
+      const response = await axios.delete(
+        `http://localhost:3000/products/${produto.id}`
+      );
       console.log("Product deleted successfully:", response.data.message);
       alert("Product deleted successfully!");
-      window.location.reload(); 
+      window.location.reload();
     } catch (error) {
-      if (error.response && error.response.data) {
-        console.error("Error deleting product:", error.response.data);
-      } else if (error.request) {
-        console.error("Network error or server did not respond:", error.message);
-      } else {
-        console.error("Unexpected error:", error.message);
-      }
+      console.error("Error deleting product:", error.response || error.message);
     }
   };
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
-  
-    if (!formData.name || !formData.author || !formData.category || !formData.year || !formData.price || !formData.qntEstoque) {
+
+    if (
+      !formData.name ||
+      !formData.author ||
+      !formData.category ||
+      !formData.year ||
+      !formData.price ||
+      !formData.qntEstoque
+    ) {
       setError("Preencha todos os campos obrigatórios.");
       return;
     }
-  
+
     try {
-      if (!productId) {
-        console.error("ID do produto não está definido.");
-        return;
-      }
-  
       const payload = {
-        name: formData.name.trim(),
-        author: formData.author.trim(),
-        category: formData.category.trim(),
+        ...formData,
         year: parseInt(formData.year, 10),
-        sinopse: formData.sinopse.trim(),
         price: parseFloat(formData.price),
-        qntEstoque: parseInt(formData.qntEstoque, 10), 
-        image: formData.image.trim(),
-    };
-  
-      console.log("Payload enviado:", payload);
-  
-      const response = await fetch(`http://localhost:3000/products/${productId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-  
-      if (response.ok) {
-        const updatedProduct = await response.json();
-        console.log("Produto atualizado com sucesso");
+        qntEstoque: parseInt(formData.qntEstoque, 10),
+      };
+
+      const response = await axios.put(
+        `http://localhost:3000/products/${productId}`,
+        payload
+      );
+
+      if (response.status === 200) {
+        const updatedProduct = response.data;
         atualizarProduto(updatedProduct);
-        navigate("/UserHome")
+        navigate("/UserHome");
         setError("");
-      } else {
-        const errorData = await response.json();
-        console.error("Erro ao atualizar produto:", errorData);
-        setError(errorData.message || "Erro ao atualizar o produto.");
       }
     } catch (error) {
-      console.error("Erro ao fazer requisição:", error);
       setError("Erro ao conectar com o servidor.");
+      console.error("Erro ao atualizar produto:", error.message);
     }
   };
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === "quantity" ? parseInt(value, 10) || 0 : value,
+      [name]: value,
     }));
   };
 
@@ -137,36 +122,26 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
       alert("Usuário não está logado.");
       return;
     }
-  
+
     if (!produto.id) {
       alert("ID do produto não encontrado.");
       return;
     }
-  
+
     try {
       const response = await axios.post("http://localhost:3000/carrinho/add", {
-        userId: userID, 
-        productId: produto.id, 
+        userId: userID,
+        productId: produto.id,
         quantity: 1,
       });
-  
+
       if (response.data.success) {
-        console.log(`Produto adicionado com sucesso ao carrinho.`);
         alert("Produto adicionado ao carrinho com sucesso!");
       } else {
-        alert(`Erro: ${response.data.message || "Não foi possível adicionar ao carrinho."}`);
+        alert("Erro: Não foi possível adicionar ao carrinho.");
       }
     } catch (error) {
-      if (error.response && error.response.data) {
-        console.error("Erro ao adicionar produto ao carrinho:", error.response.data);
-        alert(`Erro: ${error.response.data.message || "Não foi possível adicionar ao  carrinho."}`);
-      } else if (error.request) {
-        console.error("Erro de rede ou servidor não respondeu:", error.message);
-        alert("Erro de rede: Não foi possível conectar ao servidor.");
-      } else {
-        console.error("Erro inesperado:", error.message);
-        alert("Ocorreu um erro inesperado.");
-      }
+      alert("Erro de rede: Não foi possível conectar ao servidor.");
     }
   };
 
@@ -176,18 +151,46 @@ const Card = ({ produto, atualizarProduto, removerProduto }) => {
 
   return (
     <>
-      <div onClick={handleCardClick} className="p-4 border-2 border-emerald-100 rounded-lg">
+       <div
+        onClick={handleCardClick}
+        className="p-4 border-2 border-emerald-100 rounded-lg"
+      >
         <div className="flex justify-end space-x-2">
-          <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleEditarModal}>Editar</button>
-          <button className="bg-gray-100 px-6 py-0.5 rounded-md" onClick={handleExcluirModal}>Excluir</button>
+          <button
+            className="bg-gray-100 px-6 py-0.5 rounded-md"
+            onClick={handleEditarModal}
+          >
+            Editar
+          </button>
+          <button
+            className="bg-gray-100 px-6 py-0.5 rounded-md"
+            onClick={handleExcluirModal}
+          >
+            Excluir
+          </button>
         </div>
-        <img className="w-96 mx-auto mt-6" src={produto.image} alt="" />
+        <img
+          className={`w-96 mx-auto mt-6 ${
+            produto.qntEstoque === 0 ? "grayscale" : ""
+          }`}
+          src={produto.image}
+          alt=""
+        />
         <p>{produto.name}</p>
         <p className="mt-4">Autor: {produto.author}</p>
         <p>Categoria: {produto.category}</p>
         <p>Ano de Publicação: {produto.year}</p>
 
-        <button onClick={handleAddToCart} className="bg-emerald-50 text-emerald-900 w-full mt-4 py-2 border border-gray-200 rounded-md">Adicionar ao carrinho</button>
+        {produto.qntEstoque > 0 ? (
+          <button
+            onClick={handleAddToCart}
+            className="bg-emerald-50 text-emerald-900 w-full mt-4 py-2 border border-gray-200 rounded-md"
+          >
+            Adicionar ao carrinho
+          </button>
+        ) : (
+          <p className="text-red-500 mt-4 text-center">Indisponível</p>
+        )}
       </div>
 
       {editarModal && (

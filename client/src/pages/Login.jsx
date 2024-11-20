@@ -1,11 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../pages/AuthContext"; // Certifique-se de importar o contexto corretamente
 
 const Login = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isAdmin, setIsAdmin] = React.useState(false); 
-  const navigate = useNavigate()
+  const { login } = useAuth(); // Usando o contexto para autenticar
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,11 +23,12 @@ const Login = () => {
 
       const data = await response.json();
       if (response.ok) {
+        console.log(data)
+        login(data.token, data.id, data.role);
 
-        navigate("/userhome")
-        console.log("Token:", data.token); 
-        localStorage.setItem("userId", data.id)
-        console.log(localStorage.getItem("userId"))
+        // Redirecionando após login bem-sucedido
+        navigate("/userhome");
+        console.log("Token armazenado:", data.token);
       } else {
         alert(data.error || "Erro no login");
       }

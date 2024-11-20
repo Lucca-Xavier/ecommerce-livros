@@ -106,36 +106,23 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, author, category, sinopse, year, image, price, qntEstoque } =
-      req.body;
+    const updates = req.body;
 
-      const produto = await Product.findByPk(id)
-      if(!produto){
-        return res.status(404).json({error: "Produto não encontrado"})
-      }
+    const produto = await Product.findByPk(id);
 
-    if (
-      !name ||
-      !author ||
-      !category ||
-      !sinopse ||
-      !year ||
-      !image ||
-      !price ||
-      !qntEstoque
-    ) {
-      return res.status(422).json({ error: "Preencha todos os campos" });
+    if (!produto) {
+      return res.status(404).json({ error: "Produto não encontrado" });
     }
 
-    await Product.update(
-        { name,  author, category, sinopse, year, image, price, qntEstoque },
-        { where: { id } }
-    )
+    // Validação: Verifica se ao menos um campo foi enviado
+    if (Object.keys(updates).length === 0) {
+      return res.status(422).json({ error: "Nenhum campo para atualizar foi enviado" });
+    }
 
-    res.status(200).json({ message: "Produto editado com sucesso" });
-    console.log("Produto editado com sucesso");
+    // Atualiza apenas os campos fornecidos
+    await produto.update(updates);
 
-
+    res.status(200).json({ message: "Produto editado com sucesso", produto });
   } catch (error) {
     console.error("Erro ao editar produto:", error);
     res.status(500).json({ error: "Erro ao editar produto" });

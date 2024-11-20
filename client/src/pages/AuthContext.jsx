@@ -5,29 +5,37 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true); // Estado de carregamento
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userRole = localStorage.getItem('role');
+    const userRole = localStorage.getItem('userRole');
     setIsLoggedIn(!!token);
     setRole(userRole);
-    setLoading(false); // Dados carregados, setamos loading para falso
+    setLoading(false);
+    console.log('Auth Context Initialized:', { token, userRole, isLoggedIn: !!token });
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userRole');
-    setIsLoggedIn(false);
-    setRole(null);
+  const login = (token, userId, userRole) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('userRole', userRole);
+    setIsLoggedIn(true);
+    setRole(userRole);
+    console.log('User logged in:', { token, userId, userRole });
   };
 
-  if (loading) return null; // Renderizar nada enquanto carrega
+  const logout = () => {
+    localStorage.clear();
+    setIsLoggedIn(false);
+    setRole(null);
+    console.log('User logged out');
+  };
+
+  if (loading) return null;
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, role, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

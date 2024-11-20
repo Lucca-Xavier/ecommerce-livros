@@ -119,7 +119,7 @@ const Carrinho = () => {
         return produto ? total + produto.price * item.quantity : total;
       }, 0),
     };
-
+  
     try {
       const response = await fetch("http://localhost:3000/orders/add", {
         method: "POST",
@@ -128,9 +128,26 @@ const Carrinho = () => {
         },
         body: JSON.stringify(orderData),
       });
-
+  
       if (response.ok) {
-        // Sucesso: Redireciona ou limpa o carrinho
+        // Atualizar o estoque de cada produto
+        await Promise.all(
+          cartItems.map(async (item) => {
+            const produto = findProduct(item.productId);
+            if (produto) {
+              await fetch(`http://localhost:3000/products/${produto.id}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  qntEstoque: produto.qntEstoque - item.quantity,
+                }),
+              });
+            }
+          })
+        );
+  
         alert("Order placed successfully!");
         setCartItems([]); // Limpa o carrinho
         navigate("/orders"); // Redireciona para a página de pedidos

@@ -38,7 +38,7 @@ const Detail = () => {
         <h1 className='text-2xl font-semibold pb-8'>{produto.name}</h1>
         <span>Tipo: {produto.category}</span>
         <p>Preço: R$ {produto.price}</p>
-        <p>Quantidade: {produto.qntEstoque}</p>
+        <p>Quantidade no estoque: {produto.qntEstoque}</p>
         <p>Autor: {produto.author}</p>
         <p>Ano de Publicação: {produto.year}</p>
         <p className='py-2 border border-gray-200 rounded px-2'>Sinopse: {produto.sinopse}</p>
