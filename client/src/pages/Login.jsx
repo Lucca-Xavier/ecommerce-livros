@@ -26,7 +26,6 @@ const Login = () => {
         console.log(data)
         login(data.token, data.id, data.role);
 
-        // Redirecionando após login bem-sucedido
         navigate("/userhome");
         console.log("Token armazenado:", data.token);
       } else {

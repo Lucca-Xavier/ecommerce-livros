@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 
-// Create a new order
 router.post('/add', async (req, res) => {
     try {
         const { UserId, products, totalprice } = req.body;
@@ -25,7 +24,6 @@ router.post('/add', async (req, res) => {
     }
 });
 
-// Get all orders for a specific user
 router.get('/user/:UserId', async (req, res) => {
     const { UserId } = req.params;
     try {
@@ -56,22 +54,24 @@ router.get('/', async (req, res) => {
 
 router.put('/:OrderId/status', async (req, res) => {
     const { OrderId } = req.params;
-    const { OrderStatus } = req.body;
-
+    const { OrderStatus } = req.body; // Certifique-se de que este nome corresponde ao do frontend
+  
     try {
-        const order = await Order.findByPk(OrderId);
-        if (!order) {
-            return res.status(404).json({ error: 'Order not found.' });
-        }
-
-        order.OrderStatus = OrderStatus;
-        await order.save();
-
-        res.status(200).json({ message: 'Order status updated successfully.', order });
+      const order = await Order.findByPk(OrderId);
+      if (!order) {
+        return res.status(404).json({ error: 'Order not found.' });
+      }
+  
+      // Atualize o status do pedido
+      order.OrderStatus = OrderStatus;
+      await order.save();
+  
+      res.status(200).json({ message: 'Order status updated successfully.', order });
     } catch (error) {
-        console.error('Error updating order status:', error);
-        res.status(500).json({ error: 'Error updating order status.' });
+      console.error('Error updating order status:', error);
+      res.status(500).json({ error: 'Error updating order status.' });
     }
-});
+  });
+  
 
 module.exports = router;
