@@ -51,14 +51,14 @@ const Orders = () => {
   };
 
   // Function to update the order status
-  const handleStatusChange = async (orderId, newStatus) => {
-    if (!orderId) {
+  const handleStatusChange = async (IdOrder, newStatus) => {
+    if (!IdOrder) {
       console.error('Order ID is undefined');
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/orders/${orderId}/status`, {
+      const response = await fetch(`http://localhost:3000/orders/${IdOrder}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const Orders = () => {
       if (response.ok) {
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
-            order.id === orderId ? { ...order, OrderStatus: newStatus } : order
+            order.id === IdOrder ? { ...order, OrderStatus: newStatus } : order
           )
         );
       } else {
@@ -114,16 +114,16 @@ const Orders = () => {
                   <div className="mt-4">
                     <label className="text-sm text-gray-700 mr-2">Status do Pedido:</label>
                     <select
-                      className='border border-gray-200 rounded-md px-2 py-1 mt-4'
-                      value={order.OrderStatus}
-                      onChange={(e) => {
-                        if (order.id) {
-                          handleStatusChange(order.id, e.target.value);
-                        } else {
-                          console.error('Order ID is undefined');
-                        }
-                      }}
-                    >
+                          className='border border-gray-200 rounded-md px-2 py-1 mt-4'
+                          value={order.OrderStatus}
+                          onChange={(e) => {
+                            if (order.IdOrder) {
+                              handleStatusChange(order.IdOrder, e.target.value);
+                            } else {
+                              console.error('Order ID is undefined');
+                            }
+                          }}
+                        >
                       <option value="Aguardando pagamento">Aguardando pagamento</option>
                       <option value="Enviado">Enviado</option>
                       <option value="Entregue">Entregue</option>
